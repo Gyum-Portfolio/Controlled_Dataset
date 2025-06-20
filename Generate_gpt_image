@@ -1,0 +1,30 @@
+import openai
+import requests
+from PIL import Image
+from io import BytesIO
+import random
+import os
+
+openai.api_key = "your_openai_api_key_here"
+
+prompts = [
+    "A 30-year-old Asian woman, looking directly at the camera, neutral face, plain background, Maximalist masterpiece, painted, acrylic painting, trending on pixiv fanbox, palette knife and brush strokes, style of makoto shinkai jamie wyeth james gilleard edward hopper greg rutkowski studio ghibli genshin impact",
+    "A 30-year-old Asian woman, looking directly at the camera, neutral face, plain background, photo realistic, extreme detail, lifelike, crisp, precise, environmental, detailed, 35mm photograph, film, bokeh, professional, 4k, highly detailed",
+    "A 30-year-old Asian woman, looking directly at the camera, neutral face, plain background, film grain, cinematic film still, shallow depth of field, highly detailed, high budget, cinemascope, moody, epic, overalldetail, gorgeous, 2000s vintage Raw photo, photorealistic, candid camera, color graded cinematic, eye catchlights, atmospheric lighting, natural"
+]
+
+prompt = random.choice(prompts)
+
+response = openai.Image.create(
+    prompt=prompt,
+    model="dall-e-3",
+    n=1,
+    size="1024x1024",
+    response_format="url"
+)
+
+image_url = response['data'][0]['url']
+image_response = requests.get(image_url)
+img = Image.open(BytesIO(image_response.content))
+filename = "synthetic_image.png"
+img.save(filename)
